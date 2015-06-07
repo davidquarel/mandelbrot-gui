@@ -61,40 +61,52 @@ color make_color(int red, int green, int blue){
 	return new_color;
 }
 //*********************************************
+//*******************G D A Y*******************
 //*********************************************
-//*********************************************
+//********************M 9 0********************
 //*********************************************
 //*********************************************
 //*********************************************
 
 void mandelbrot_bw(){ //0 if in set, 1 else, B&W
-	printf("P1\n%d %d\n",width,height);
+	char *image = (char *)malloc(width * height * sizeof(char) * 2 + height + 16);
+	char *start = image + sprintf(image, "P1\n%d %d\n", width, height);
+	char *current;
 	
 	int x;
 	int y;
 	complex c;
+	#pragma omp parallel private(x, y, c, current) shared(image)
+	{
+		#pragma omp for
+		for(y=0; y < height; y++){ 
+			current = start + (y * width * 2 + y);
+			for(x=0; x < width; x++){
+				c = coord_to_complex(x,y);
+				int iter;
 
-	for(y=0; y < height; y++){ 
-		for(x=0; x < width; x++){
-			c = coord_to_complex(x,y);
-			int iter;
+				complex z = c_zero;
 
-			complex z = c_zero;
-
-			for(iter=ITER_MAX; iter>0; iter--){
-				if(mag_sq(z) >= bound){
-					printf("0 "); //point escaped bounds, outside set
-					break;
+				for(iter=ITER_MAX; iter>0; iter--){
+					if(mag_sq(z) >= bound){
+						//printf("0 "); //point escaped bounds, outside set
+						*(current++) = '0';
+						break;
+					}
+					z = add(mult(z,z),c);  //iterate again, z_{i+1} = z_i^2 + c
 				}
-				z = add(mult(z,z),c);  //iterate again, z_{i+1} = z_i^2 + c
+				if(!iter){
+					//printf("1 "); //point stayed in set after ITER_LIMIT_BW iterations, in set
+					*(current++) = '1';
+				}
+				*(current++) = ' ';
 			}
-			if(!iter){
-				printf("1 "); //point stayed in set after ITER_LIMIT_BW iterations, in set
-			}
-
+			//printf("\n");
+			*current = '\n';
 		}
-		printf("\n");
 	}
+	puts(image);
+	free(image);
 	return;
 }
 
