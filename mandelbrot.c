@@ -10,20 +10,20 @@ Pipe output from code into a .ppm file
 #include <string.h>
 #include <omp.h>
 
-const float bound = 4; //square roots are expensive
+const double bound = 4; //square roots are expensive
 int ITER_MAX = 255;
 int COLOR_STEP = 11;
 
 typedef struct{
-	float re;
-	float im;
+	double re;
+	double im;
 } complex;
 
 int width;
 int height;
 
 //Functions for Complex Numbers
-complex make_complex(float real, float imag){
+complex make_complex(double real, double imag){
 	complex new_complex = {real, imag};
 	return new_complex;
 }
@@ -36,15 +36,15 @@ complex mult(complex a, complex b){
 	return make_complex(a.re*b.re - a.im*b.im , a.re*b.im + a.im*b.re);
 }
 
-float mag_sq(complex a){
+double mag_sq(complex a){
 	return (a.re*a.re + a.im*a.im);
 }
 
 complex coord_to_complex(int x, int y){
-	float new_x;
-	float new_y;
-	new_x = (float)x * 3 / width - 2; //scale [0,width] to [-2,1]  
-	new_y = (float)y * 2 / height - 1; //scale [0,height] to [-1,1]
+	double new_x;
+	double new_y;
+	new_x = (double)x * 3 / width - 2; //scale [0,width] to [-2,1]  
+	new_y = (double)y * 2 / height - 1; //scale [0,height] to [-1,1]
 	return make_complex(new_x,new_y);
 }
 
