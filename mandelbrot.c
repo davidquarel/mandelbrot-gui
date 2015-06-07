@@ -8,6 +8,7 @@ Pipe output from code into a .ppm file
 #include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
+#include <unistd.h>
 #include <omp.h>
 
 const double bound = 4; //square roots are expensive
@@ -111,29 +112,43 @@ void mandelbrot_bw(){ //0 if in set, 1 else, B&W
 }
 
 void mandelbrot_gs(){ //8-bit binary greyscale binary
-	printf("P5\n%d %d\n255\n",width,height);
+	char *image = (char *)malloc(width * height * sizeof(char) + 50);
+	int pre = sprintf(image, "P5\n%d %d\n255\n",width,height);
+
+	char *start = image + pre;
+	char *current;
+
 	int x;
 	int y;
 	complex c;
-	for(y=0; y < height; y++){ 
-		for(x=0; x < width; x++){
-			c = coord_to_complex(x,y);
-			int iter;
+	#pragma omp parallel private(x, y, c, current) shared(image)
+	{ 
+		#pragma omp for
+		for(y=0; y < height; y++){ 
+			current = start + (y * width);
+			for(x=0; x < width; x++){
+				c = coord_to_complex(x,y);
+				int iter;
 
-			complex z = c_zero;
+				complex z = c_zero;
 
-			for(iter=ITER_MAX; iter>0; iter--){
-				if(mag_sq(z) >= bound){
-					putchar(iter);
-					break;
+				for(iter=ITER_MAX; iter>0; iter--){
+					if(mag_sq(z) >= bound){
+						//putchar(iter);
+						*(current++) = iter;
+						break;
+					}
+					z = add(mult(z,z),c);  //z_{i+1} = z_i^2 + c
 				}
-				z = add(mult(z,z),c);  //z_{i+1} = z_i^2 + c
-			}
-			if(!iter){
-				putchar(0);
+				if(!iter){
+					//putchar(0);
+					*(current++) = 0;
+				}
 			}
 		}
 	}
+	write(1, image, pre + width * height);
+	free(image);
 	return;
 }
 
