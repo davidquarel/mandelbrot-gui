@@ -18,7 +18,7 @@ int width;
 int height;
 
 //Functions for Complex Numbers
-complex* make_complex(float real, float imag){
+complex make_complex(float real, float imag){
 	complex new_complex = {real, imag};
 	return new_complex;
 }
