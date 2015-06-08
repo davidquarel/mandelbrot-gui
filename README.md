@@ -53,9 +53,9 @@ if in color. Default value is 255, recommended to lower to 30 when using color.
 
 `-r R` is the "radius", or half of the length of the size of the bounding box in which the picture is drawn, defaults to 2
 
-The bottom left corner of the bounding box is $(X-R,Y-R)$, and the top right is $(X+R,Y+R)$
+The bottom left corner of the bounding box is (X-R,Y-R), and the top right is (X+R,Y+R)
 
-Example: `-p 1 0 2` will draw the bounding box such that the bottom left corner is at $(-1,-2)$, top right at $(3,2)$.
+Example: `-p 1 0 2` will draw the bounding box such that the bottom left corner is at (-1,-2), top right at (3,2).
 	
 		
 		
