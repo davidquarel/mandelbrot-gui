@@ -10,6 +10,10 @@ Color is now parallelized
 //time ./mandelbrot -d 8192 8192 -f c -i 150 -z -0.16 1.033 0.015 > test.ppm
 //this took partch 3m16s
 
+//Zoom in on the coordinate point
+//0.001643721971153 -0.822467633298876i
+//for pretty tri squiggles
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
