@@ -2,4 +2,5 @@
 *.s
 mandelbrot
 *.png
+*.swp
 
