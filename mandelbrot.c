@@ -236,8 +236,8 @@ void print_help(){
 		"-p: Point to zoom in on\n"
 		"X Y: Point to zoom in on\n"
 		"-r R: radius of BOUNDing box around zoomed point, too low values can cause rounding errors\n"
-		"-z X Y R will draw BOUNDing box [X-R,Y-R] to [X+R,Y+R]\n"
-		"Will default to drawing BOUNDing box about\n"
+		"-p X Y -r R will draw bounding box [X-R,Y-R] to [X+R,Y+R]\n"
+		"Will default to drawing bounding box about\n"
 		"\n"
 		);
 	return;
