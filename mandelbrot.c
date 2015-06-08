@@ -42,7 +42,7 @@ typedef struct{
 	double im;
 } complex;
 
-#define c_zero make_complex(0,0);
+#define c_zero make_complex(0, 0);
 
 //Functions for Complex Numbers
 complex make_complex(double real, double imag){
@@ -176,30 +176,33 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 	int x;
 	int y;
 	complex c;
-	int iter_max_col;
-	for(iter_max_col=1; iter_max_col<ITER_MAX; iter_max_col++){
-		#pragma omp parallel private(x, y, c, current)
-		{
-			#pragma omp for
-			for(y=0; y < HEIGHT; y++){ 
-				current = world + (y * WIDTH);
-				for(x=0; x < WIDTH; x++){
-					c = coord_to_complex(x,y);
-					complex z = c_zero;
-					int iter;
-					for(iter=iter_max_col; iter>0; iter--){
-						if(mag_sq(z) >= BOUND){
-							break;
-						}
-						z = add(mult(z,z),c);  //z_{i+1} = z_i^2 + c
-					}
-					if(!iter){
-						char val = iter_max_col*COLOR_STEP; //choose prime numbers for pretty colours
-						//world[WIDTH*y+x] = make_color(val,val,val*2);
+	complex z;
+	#pragma omp parallel private(x, y, c, z, current)
+	{
+		#pragma omp for
+		for(y=0; y < HEIGHT; y++){ 
+			current = world + (y * WIDTH);
+			for(x=0; x < WIDTH; x++){
+				c = coord_to_complex(x,y);
+				z = c_zero;
+				int iter;
+				for(iter=ITER_MAX; iter>0; iter--){
+					if(mag_sq(z) >= BOUND){
+						char val = iter * COLOR_STEP;
 						*current = make_color(val, val, val * 2);
+						break;
 					}
-					current++;
+					z = add(mult(z,z),c);  //z_{i+1} = z_i^2 + c
 				}
+				if(!iter){
+					*current = make_color(0, 0, 0);
+					/*
+					char val = iter_max_col*COLOR_STEP; //choose prime numbers for pretty colours
+					//world[WIDTH*y+x] = make_color(val,val,val*2);
+					*current = make_color(val, val, val * 2);
+					*/
+				}
+				current++;
 			}
 		}
 	}
@@ -213,7 +216,7 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 	}
 	*/
 	write(1, image, HEIGHT * WIDTH * sizeof(color) + pre);
-	free(image);
+	//free(image);
 
 	return;
 
