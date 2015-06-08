@@ -30,9 +30,9 @@ int COLOR_STEP = 11;
 //int SIZE = 1024;
 int WIDTH = 1024;
 int HEIGHT = 1024;
-
-double CENTER_X = -0.5;
-double CENTER_Y = 0;
+//By Default, zooms in on an interesting point
+double CENTER_X = 0.001643721971153;
+double CENTER_Y = -0.822467633298876;
 double RADIUS = 1;
 double SCALE_FACTOR_X = 2*2/ (double)1024 + 1;
 double SCALE_FACTOR_Y = 2*2/ (double)1024 + 1;
@@ -216,7 +216,7 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 }
 
 void print_help(){
-	printf("usage: mandelbrot [-h | --help] [-d W H] [-f b|g|c] [-s S] [-i I] [-z X Y R]\n"
+	printf("usage: mandelbrot [-h | --help] [-d W H] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]\n"
 		"-h | --help: Print this help\n"
 		"-d: dimensions of image, default 1024x1024\n"
 		"W/H: WIDTH/HEIGHT of image\n"
@@ -229,19 +229,18 @@ void print_help(){
 		"-s S: steps between adjacent colours, default 11\n"
 		"-i I: Iterations for mandelbrot recursion, default 255\n"
 		"\n"
-		"-z: Zoom in on part of the image\n"
-		"X Y: Coordinate to zoom in on\n"
-		"R: radius of BOUNDing box around zoomed point, too low values can cause rounding errors\n"
+		"-p: Point to zoom in on\n"
+		"X Y: Point to zoom in on\n"
+		"-r R: radius of BOUNDing box around zoomed point, too low values can cause rounding errors\n"
 		"-z X Y R will draw BOUNDing box [X-R,Y-R] to [X+R,Y+R]\n"
-		"Will default to drawing BOUNDing box [-1.5,-1] to [0.5,1]\n"
+		"Will default to drawing BOUNDing box about\n"
 		"\n"
-		"No arguments is equvalent to ./mandelbrot -d 1024 1024 -a g -i 255\n"
 		);
 	return;
 }
 
 void print_usage(){
-	printf("usage: mandelbrot [-h | --help] [-d W H] [-f b|g|c] [-step S] [-i I] [-z X Y R]\n");
+	printf("usage: mandelbrot [-h | --help] [-d W H] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]\n");
 	return;
 }
 
@@ -279,8 +278,11 @@ int main(int argc, char *argv[]){
     	else if(input_eq("-z")){ 
     		sscanf(argv[i+1],"%lf",&CENTER_X);
     		sscanf(argv[i+2],"%lf",&CENTER_Y);
-    		sscanf(argv[i+3],"%lf",&RADIUS);
-    		i+=3;
+    		i+=2;
+    	}
+    	else if(input_eq("-r")){
+    		sscanf(argv[i+1],"%lf",&RADIUS);
+    		i++;
     	}
 
     	//error, did not match
