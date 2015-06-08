@@ -3,7 +3,11 @@ Mandelbrot Set
 David Quarel 07/06/15
 Pipe output from code into a .ppm file
 Got zoom working
+Color is now parallelized
 */
+
+//BENCHMARK
+//time ./mandelbrot -d 8192 8192 -f c -i 150 -z -0.16 1.033 0.015 > test.ppm
 
 #include <stdio.h>
 #include <stdlib.h>
