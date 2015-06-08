@@ -127,7 +127,7 @@ void mandelbrot_gs(){ //8-bit binary greyscale binary
 	int x;
 	int y;
 	complex c;
-	#pragma omp parallel private(x, y, c, current) shared(image)
+	#pragma omp parallel private(x, y, c, current)
 	{ 
 		#pragma omp for
 		for(y=0; y < HEIGHT; y++){ 
@@ -168,20 +168,24 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 	complex c;
 	int iter_max_col;
 	for(iter_max_col=1; iter_max_col<ITER_MAX; iter_max_col++){
-		for(y=0; y < HEIGHT; y++){ 
-			for(x=0; x < WIDTH; x++){
-				c = coord_to_complex(x,y);
-				complex z = c_zero;
-				int iter;
-				for(iter=iter_max_col; iter>0; iter--){
-					if(mag_sq(z) >= BOUND){
-						break;
+		#pragma omp parallel private(x, y, c)
+		{
+			#pragma omp for
+			for(y=0; y < HEIGHT; y++){ 
+				for(x=0; x < WIDTH; x++){
+					c = coord_to_complex(x,y);
+					complex z = c_zero;
+					int iter;
+					for(iter=iter_max_col; iter>0; iter--){
+						if(mag_sq(z) >= BOUND){
+							break;
+						}
+						z = add(mult(z,z),c);  //z_{i+1} = z_i^2 + c
 					}
-					z = add(mult(z,z),c);  //z_{i+1} = z_i^2 + c
-				}
-				if(!iter){
-					char val = iter_max_col*COLOR_STEP; //choose prime numbers for pretty colours
-					world[WIDTH*y+x] = make_color(val,val,val*2);
+					if(!iter){
+						char val = iter_max_col*COLOR_STEP; //choose prime numbers for pretty colours
+						world[WIDTH*y+x] = make_color(val,val,val*2);
+					}
 				}
 			}
 		}
