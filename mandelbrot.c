@@ -8,6 +8,7 @@ Color is now parallelized
 
 //BENCHMARK
 //time ./mandelbrot -d 8192 8192 -f c -i 150 -z -0.16 1.033 0.015 > test.ppm
+//this took partch 3m16s
 
 #include <stdio.h>
 #include <stdlib.h>
