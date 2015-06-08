@@ -172,15 +172,17 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 	char *image = (char *)malloc(HEIGHT * WIDTH * sizeof(color) + 50);
 	int pre = sprintf(image, "P6\n%d %d\n255\n",WIDTH,HEIGHT); //P6, colour binary file
 	color *world = (color *)(image + pre);
+	color *current = world;
 	int x;
 	int y;
 	complex c;
 	int iter_max_col;
 	for(iter_max_col=1; iter_max_col<ITER_MAX; iter_max_col++){
-		#pragma omp parallel private(x, y, c)
+		#pragma omp parallel private(x, y, c, current)
 		{
 			#pragma omp for
 			for(y=0; y < HEIGHT; y++){ 
+				current = world + (y * WIDTH);
 				for(x=0; x < WIDTH; x++){
 					c = coord_to_complex(x,y);
 					complex z = c_zero;
@@ -193,8 +195,10 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 					}
 					if(!iter){
 						char val = iter_max_col*COLOR_STEP; //choose prime numbers for pretty colours
-						world[WIDTH*y+x] = make_color(val,val,val*2);
+						//world[WIDTH*y+x] = make_color(val,val,val*2);
+						*current = make_color(val, val, val * 2);
 					}
+					current++;
 				}
 			}
 		}
