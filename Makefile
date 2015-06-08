@@ -1,4 +1,4 @@
-CFLAGS=-O2 -Wall -Werror --std=c99 -fopenmp
+CFLAGS=-O2 -Wall -Werror --std=c99 -fopenmp -Wno-unused-result
 
 default: all
 
