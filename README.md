@@ -5,6 +5,8 @@ To compile, use the provided Makefile by executing `make`.
 Run the program with `./mandelbrot` and pipe the result into a `.ppm` file.
 The program prints a help message with `-h` or `--help` flags.
 
+
+<!-->
 A point $c$ is in the Mandelbrot set if the sequence $(z_n)$ defined by
 $$
 z_{n+1} = z_n^2 + c
@@ -19,6 +21,8 @@ $$
 \forall n, \; |z_n|^2 < 4 \text{ rather than } \forall n \; |z_n| < 2
 $$
 as the unnecessary square root is expensive.
+<!-->
+
 
 `usage: mandelbrot [-h | --help] [-d W H] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]`
 
