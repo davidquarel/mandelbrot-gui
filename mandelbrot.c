@@ -160,8 +160,9 @@ void mandelbrot_gs(){ //8-bit binary greyscale binary
 
 void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 	//color world[SIZE*SIZE];
-	color *world = (color *)malloc(HEIGHT * WIDTH * sizeof(color));
-	printf("P6\n%d %d\n255\n",WIDTH,HEIGHT); //P6, colour binary file
+	char *image = (char *)malloc(HEIGHT * WIDTH * sizeof(color) + 50);
+	int pre = sprintf(image, "P6\n%d %d\n255\n",WIDTH,HEIGHT); //P6, colour binary file
+	color *world = (color *)(image + pre);
 	int x;
 	int y;
 	complex c;
@@ -186,14 +187,16 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 		}
 	}
 
+	/*
 	for(y=0; y < HEIGHT; y++){ 
 		for(x=0; x < WIDTH; x++){
 			color cell = world[WIDTH*y+x];
 			printf("%c%c%c",cell.r,cell.g,cell.b);
 		}
 	}
-
-	free(world);
+	*/
+	write(1, image, HEIGHT * WIDTH * sizeof(color) + pre);
+	free(image);
 
 	return;
 
