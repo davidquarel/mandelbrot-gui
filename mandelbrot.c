@@ -179,9 +179,9 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 	complex z;
 	#pragma omp parallel private(x, y, c, z, current)
 	{
-		#pragma omp for
 		for(y=0; y < HEIGHT; y++){ 
 			current = world + (y * WIDTH);
+			#pragma omp for
 			for(x=0; x < WIDTH; x++){
 				c = coord_to_complex(x,y);
 				z = c_zero;
