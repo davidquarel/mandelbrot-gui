@@ -2,6 +2,7 @@
 Mandelbrot Set
 David Quarel 07/06/15
 Pipe output from code into a .ppm file
+Got zoom working
 */
 
 #include <stdio.h>
@@ -11,22 +12,42 @@ Pipe output from code into a .ppm file
 #include <unistd.h>
 #include <omp.h>
 
-const double bound = 4; //square roots are expensive
+#define input_eq(s1) !(strcmp(argv[i],s1))
+
+const double BOUND = 4; //square roots are expensive
 int ITER_MAX = 255;
 int COLOR_STEP = 11;
+
+int SIZE = 1024;
+int width = 1024;
+int height = 1024;
+
+double CENTER_X = -0.5;
+double CENTER_Y = 0;
+double RADIUS = 1;
+double SCALE_FACTOR = 2*2/ (double)1024 + 1;
 
 typedef struct{
 	double re;
 	double im;
 } complex;
 
-int width;
-int height;
+#define c_zero make_complex(0,0);
 
 //Functions for Complex Numbers
 complex make_complex(double real, double imag){
 	complex new_complex = {real, imag};
 	return new_complex;
+}
+
+complex coord_to_complex(int x, int y){
+	double new_x;
+	double new_y;
+	new_x = (double)x * 2 * RADIUS / (double)SIZE + CENTER_X - RADIUS; //scale [0,SIZE] to [X-R,X+R]
+	new_y = (double)y * 2 * RADIUS / (double)SIZE - CENTER_Y - RADIUS; //sclae [0,SIZE] to [Y-R,Y+R]
+	//new_x = (double)x * 4 / SIZE - 2; //scale [0,SIZE] to [-2,2]  
+	//new_y = (double)y * 4 / SIZE - 2; //scale [0,SIZE] to [-2,2]
+	return make_complex(new_x,new_y);
 }
 
 complex add(complex a, complex b){
@@ -41,15 +62,6 @@ double mag_sq(complex a){
 	return (a.re*a.re + a.im*a.im);
 }
 
-complex coord_to_complex(int x, int y){
-	double new_x;
-	double new_y;
-	new_x = (double)x * 3 / width - 2; //scale [0,width] to [-2,1]  
-	new_y = (double)y * 2 / height - 1; //scale [0,height] to [-1,1]
-	return make_complex(new_x,new_y);
-}
-
-#define c_zero make_complex(0,0);
 
 typedef struct{
 	char r;
@@ -61,17 +73,11 @@ color make_color(int red, int green, int blue){
 	color new_color = {red, green, blue};
 	return new_color;
 }
-//*********************************************
-//*******************G D A Y*******************
-//*********************************************
-//********************M 9 0********************
-//*********************************************
-//*********************************************
-//*********************************************
+
 
 void mandelbrot_bw(){ //0 if in set, 1 else, B&W
-	char *image = (char *)malloc(width * height * sizeof(char) * 2 + height + 16);
-	char *start = image + sprintf(image, "P1\n%d %d\n", width, height);
+	char *image = (char *)malloc(SIZE * SIZE * sizeof(char) * 2 + SIZE + 16);
+	char *start = image + sprintf(image, "P1\n%d %d\n", SIZE, SIZE);
 	char *current;
 	
 	int x;
@@ -80,17 +86,17 @@ void mandelbrot_bw(){ //0 if in set, 1 else, B&W
 	#pragma omp parallel private(x, y, c, current) shared(image)
 	{
 		#pragma omp for
-		for(y=0; y < height; y++){ 
-			current = start + (y * width * 2 + y);
-			for(x=0; x < width; x++){
+		for(y=0; y < SIZE; y++){ 
+			current = start + (y * SIZE * 2 + y);
+			for(x=0; x < SIZE; x++){
 				c = coord_to_complex(x,y);
 				int iter;
 
 				complex z = c_zero;
 
 				for(iter=ITER_MAX; iter>0; iter--){
-					if(mag_sq(z) >= bound){
-						//printf("0 "); //point escaped bounds, outside set
+					if(mag_sq(z) >= BOUND){
+						//printf("0 "); //point escaped BOUNDs, outside set
 						*(current++) = '0';
 						break;
 					}
@@ -112,8 +118,8 @@ void mandelbrot_bw(){ //0 if in set, 1 else, B&W
 }
 
 void mandelbrot_gs(){ //8-bit binary greyscale binary
-	char *image = (char *)malloc(width * height * sizeof(char) + 50);
-	int pre = sprintf(image, "P5\n%d %d\n255\n",width,height);
+	char *image = (char *)malloc(SIZE * SIZE * sizeof(char) + 50);
+	int pre = sprintf(image, "P5\n%d %d\n255\n",SIZE,SIZE);
 
 	char *start = image + pre;
 	char *current;
@@ -124,16 +130,16 @@ void mandelbrot_gs(){ //8-bit binary greyscale binary
 	#pragma omp parallel private(x, y, c, current) shared(image)
 	{ 
 		#pragma omp for
-		for(y=0; y < height; y++){ 
-			current = start + (y * width);
-			for(x=0; x < width; x++){
+		for(y=0; y < SIZE; y++){ 
+			current = start + (y * SIZE);
+			for(x=0; x < SIZE; x++){
 				c = coord_to_complex(x,y);
 				int iter;
 
 				complex z = c_zero;
 
 				for(iter=ITER_MAX; iter>0; iter--){
-					if(mag_sq(z) >= bound){
+					if(mag_sq(z) >= BOUND){
 						//putchar(iter);
 						*(current++) = iter;
 						break;
@@ -147,42 +153,42 @@ void mandelbrot_gs(){ //8-bit binary greyscale binary
 			}
 		}
 	}
-	write(1, image, pre + width * height);
+	write(1, image, pre + SIZE * SIZE);
 	free(image);
 	return;
 }
 
 void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
-	//color world[width*height];
-	color *world = (color *)malloc(width * height * sizeof(color));
-	printf("P6\n%d %d\n255\n",width,height); //P6, colour binary file
+	//color world[SIZE*SIZE];
+	color *world = (color *)malloc(SIZE * SIZE * sizeof(color));
+	printf("P6\n%d %d\n255\n",SIZE,SIZE); //P6, colour binary file
 	int x;
 	int y;
 	complex c;
 	int iter_max_col;
 	for(iter_max_col=1; iter_max_col<ITER_MAX; iter_max_col++){
-		for(y=0; y < height; y++){ 
-			for(x=0; x < width; x++){
+		for(y=0; y < SIZE; y++){ 
+			for(x=0; x < SIZE; x++){
 				c = coord_to_complex(x,y);
 				complex z = c_zero;
 				int iter;
 				for(iter=iter_max_col; iter>0; iter--){
-					if(mag_sq(z) >= bound){
+					if(mag_sq(z) >= BOUND){
 						break;
 					}
 					z = add(mult(z,z),c);  //z_{i+1} = z_i^2 + c
 				}
 				if(!iter){
 					char val = iter_max_col*COLOR_STEP; //choose prime numbers for pretty colours
-					world[width*y+x] = make_color(val,val,val*2);
+					world[SIZE*y+x] = make_color(val,val,val*2);
 				}
 			}
 		}
 	}
 
-	for(y=0; y < height; y++){ 
-		for(x=0; x < width; x++){
-			color cell = world[width*y+x];
+	for(y=0; y < SIZE; y++){ 
+		for(x=0; x < SIZE; x++){
+			color cell = world[SIZE*y+x];
 			printf("%c%c%c",cell.r,cell.g,cell.b);
 		}
 	}
@@ -194,63 +200,81 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 }
 
 void print_help(){
-	printf("usage: mandelbrot W H b|w|g|x [i] [s]\n"
-		"W: Width of picture to generate\n"
-		"H: Height of picture to generate\n"
+	printf("usage: mandelbrot [-h | --help] [-d D] [-f b|g|c] [-s S] [-i I] [-z X Y R]\n"
+		"-h | --help: Print this help\n"
+		"-d: dimensions of image, default 1024x1024\n"
+		"D: SIZE/SIZE of image\n"
+		"\n"
+		"-f: choose format, default greyscale\n"
 		"b: 1-bit B&W, ASCII output\n"
-		"i: Iterations for mandelbrot recursion, default 255\n"
 		"g: 8-bit Greyscale, Binary output\n"
 		"c: 24-bit colour, Binary output\n"
-		"s: How far to step color apart, default 11\n"
+		"\n"
+		"-s S: steps between adjacent colours, default 11\n"
+		"-i I: Iterations for mandelbrot recursion, default 255\n"
+		"\n"
+		"-z: Zoom in on part of the image\n"
+		"X Y: Coordinate to zoom in on\n"
+		"R: radius of BOUNDing box around zoomed point, too low values can cause rounding errors\n"
+		"-z X Y R will draw BOUNDing box [X-R,Y-R] to [X+R,Y+R]\n"
+		"Will default to drawing BOUNDing box [-1.5,-1] to [0.5,1]\n"
+		"\n"
+		"No arguments is equvalent to ./mandelbrot -d 1024 1024 -a g -i 255\n"
 		);
 	return;
 }
 
 void print_usage(){
-	printf("usage: mandelbrot W H b|g|c [i]\n");
+	printf("usage: mandelbrot [-h | --help] [-d D] [-f b|g|c] [-step S] [-i I] [-z X Y R]\n");
 	return;
 }
 
 int main(int argc, char *argv[]){
-    char format;
+    char format = 'g';
+    int i;
+    
+    for(i=1; i<argc; i++){
+    	if(input_eq("-h") || input_eq("--help")){
+    		print_help();
+    		return 0;
+    	}
+    	//read dimension
+    	else if(input_eq("-d")){ 
+    		sscanf(argv[i+1],"%d",&SIZE);
+    		i++;
+    	}
+    	//read format
+    	else if(input_eq("-f")){ 
+    		sscanf(argv[i+1],"%c",&format);
+    		i++;
+    	}
+    	//read color step
+    	else if(input_eq("-s")){ 
+    		sscanf(argv[i+1],"%d",&COLOR_STEP);
+    		i++;
+    	}
+    	//read iter
+    	else if(input_eq("-i")){ 
+    		sscanf(argv[i+1],"%d",&ITER_MAX);
+    		i++;
+    	}
+    	//read zoom
+    	else if(input_eq("-z")){ 
+    		sscanf(argv[i+1],"%lf",&CENTER_X);
+    		sscanf(argv[i+2],"%lf",&CENTER_Y);
+    		sscanf(argv[i+3],"%lf",&RADIUS);
+    		i+=3;
+    	}
 
-    if(argc==1){
-    	print_usage();
-    	return 0;
-    }
-
-    if(!strcmp(argv[1],"-h") || !strcmp(argv[1],"--help")){
-    	print_help();
-    	return 0;
-    } 
-
-    if(argc == 4){
-		sscanf(argv[1],"%d",&width); //read width
-	    sscanf(argv[2],"%d",&height); //read height
-	    sscanf(argv[3],"%c",&format); //read format
-	}
-
-	else if(argc == 5){
-		sscanf(argv[1],"%d",&width); //read width
-	    sscanf(argv[2],"%d",&height); //read height
-	    sscanf(argv[3],"%c",&format); //read format
-	    sscanf(argv[4],"%d",&ITER_MAX); //read iterations for black and white
-	}
-
-	else if(argc == 6){
-		sscanf(argv[1],"%d",&width); //read width
-	    sscanf(argv[2],"%d",&height); //read height
-	    sscanf(argv[3],"%c",&format); //read format
-	    sscanf(argv[4],"%d",&ITER_MAX); //read iterations for black and white
-	    sscanf(argv[5],"%d",&COLOR_STEP); //steps for color
-	}
-
-	else{
-	    print_usage();
-	    return 1;
-	}
+    	//error, did not match
+    	else{ 
+    		print_usage();
+    		return 1;
+    	}
+    }//for(i=1..)
     
     //End Handle Input
+    SCALE_FACTOR = 2*RADIUS/ (double)SIZE + 1;
 
 	if(format == 'b'){ //1-bit black and white mandelbrot
 		mandelbrot_bw();
