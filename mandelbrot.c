@@ -180,9 +180,9 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 	#pragma omp parallel private(x, y, c, z, current)
 	{
 		for(y=0; y < HEIGHT; y++){ 
-			current = world + (y * WIDTH);
 			#pragma omp for
 			for(x=0; x < WIDTH; x++){
+				current = world + (y * WIDTH) + x;
 				c = coord_to_complex(x,y);
 				z = c_zero;
 				int iter;
@@ -202,7 +202,7 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 					*current = make_color(val, val, val * 2);
 					*/
 				}
-				current++;
+				//current++;
 			}
 		}
 	}
