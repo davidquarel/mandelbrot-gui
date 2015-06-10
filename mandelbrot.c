@@ -25,7 +25,7 @@
 #define input_eq(s1) !(strcmp(argv[i],s1))
 
 const double BOUND = 4; //square roots are expensive
-int ITER_MAX = 255;
+int ITER_MAX = 100;
 int COLOR_STEP = 11;
 
 int WIDTH = 1024;
@@ -258,38 +258,31 @@ void julia_col()
 
 void print_help()
 {
-	printf("usage: mandelbrot [-h | --help] [-d W H] [-a m|j] [-j X Y] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]\n"
+	printf( "usage: mandelbrot [-h | -help] [-window WIDTH HEIGHT]" 
+			"[-mandel] [-julia X Y] [-bw | -grey | -color | -color-step STEP]"
+			"[-iter I] [-origin X Y] [-radius R] > file.ppm\n"
 			"-h | --help: Print this help\n"
-			"-d: dimensions of image, default 1024x1024\n"
-			"W/H: WIDTH/HEIGHT of image\n"
-			"\n"
-			"-a: Choose algorithm to draw picture\n"
-			"m: Mandelbrot Set\n"
-			"j: Julia Set and initial value for c\n"
-			"\n"
-			"-j X Y Choose value of c = X+Yi for computing the Julia set"
-			"\n"
-			"-f: choose format, default greyscale\n"
-			"b: 1-bit B&W, ASCII output\n"
-			"g: 8-bit Greyscale, Binary output\n"
-			"c: 24-bit colour, Binary output\n"
-			"\n"
-			"-s S: steps between adjacent colours, default 11\n"
-			"-i I: Iterations for mandelbrot recursion, default 255\n"
-			"\n"
-			"-p: Point to zoom in on\n"
-			"X Y: Point to zoom in on\n"
-			"-r R: radius of BOUNDing box around zoomed point, too low values can cause rounding errors\n"
-			"-p X Y -r R will draw bounding box [X-R,Y-R] to [X+R,Y+R]\n"
-			"Will default to drawing bounding box about\n"
-			"\n"
+			"-window WIDTH HEIGHT: dimensions of image, default 1024x1024\n"
+			"-mandel: Draw the mandelbrot set\n"
+			"-julia X Y: Draw the Julia set with initial value C = X + Yi, default C = -0.778 - 0.116i \n"
+			"-bw: 1-bit B&W, ASCII output\n"
+			"-grey: 8-bit Greyscale, Binary output\n"
+			"-color: 24-bit colour, Binary output\n"
+			"-color-step STEP: 24-bit colour, Binary output, manual colour step, default 11\n"
+			"-iter I: Iterations for mandelbrot recursion, default 100\n"
+			"-origin X Y: Location to center output image about\n"
+			"-radius R: Output image will be the bounding box [X-R,Y-R] to [X+R,Y+R]\n"
+			"Will default to drawing bounding box [-1,-1] to [1,1]\n"
+			"Pipe the result into file.ppm\n"
 			);
 	return;
 }
 
 void print_usage()
 {
-	printf("usage: mandelbrot [-h | --help] [-d W H] [-a m|j] [-j X Y] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]\n");
+	printf("usage: mandelbrot [-h | -help] [-window WIDTH HEIGHT] " 
+			"[-mandel] [-julia X Y] [-bw | -grey | -color | -color-step STEP] "
+			"[-iter I] [-origin X Y] [-radius R] > file.ppm\n");
 	return;
 }
 
@@ -298,65 +291,74 @@ int main(int argc, char *argv[])
 	char format = 'g'; /* Default greyscale */
 	char algorithm = 'm'; /* Default mandelbrot */
 	int i;
-
+	if(argc == 1){
+		print_usage();
+		return 0;
+	}
 	for (i = 1; i < argc; i++) {
 		/* print halp */
 		if (input_eq("-h") || input_eq("--help")) {
 			print_help();
 			return 0;
 		}
-		/* select algorithm */
-		else if (input_eq("-a")) {
-			sscanf(argv[i + 1], "%c", &algorithm);
-			i++;
-		}
-		/* read value of c = X + Yi for the julia set */
-		else if (input_eq("-j")) { 
-			sscanf(argv[i + 1], "%lf", &JULIA_X);
-			sscanf(argv[i + 2], "%lf", &JULIA_Y);
-			i += 2;
-		}
-		/* read dimension */
-		else if (input_eq("-d")) { 
+		/* read window size */
+		else if (input_eq("-window")) { 
 			sscanf(argv[i + 1], "%d", &WIDTH);
 			sscanf(argv[i + 2], "%d", &HEIGHT);
 			i += 2;
 		}
+		/* select algorithm */
+		else if (input_eq("-mandel")) {
+			algorithm = 'm';
+		}
+		/* read value of c = X + Yi for the julia set */
+		else if (input_eq("-julia")) {
+			algorithm = 'j'; 
+			sscanf(argv[i + 1], "%lf", &JULIA_X);
+			sscanf(argv[i + 2], "%lf", &JULIA_Y);
+			i += 2;
+		}
 		/* read format */
-		else if (input_eq("-f")) {
-			sscanf(argv[i + 1], "%c", &format);
-			i++;
+		else if (input_eq("-bw")) {
+			format = 'b';
+		}
+		else if (input_eq("-grey")) {
+			format = 'g';
+		}
+		else if (input_eq("-color")) {
+			format = 'c';
 		}
 		/* read color step */
-		else if (input_eq("-s")) { 
+		else if (input_eq("-color-step")) {
+			format = 'c';
 			sscanf(argv[i + 1], "%d", &COLOR_STEP);
 			i++;
-		}
+		}	
 		/* read iter */
-		else if (input_eq("-i")) { 
+		else if (input_eq("-iter")) { 
 			sscanf(argv[i + 1], "%d", &ITER_MAX);
 			i++;
 		}
-		/* read zoom */
-		else if (input_eq("-p")) { 
+		/* read origin */
+		else if (input_eq("-origin")) { 
 			sscanf(argv[i + 1], "%lf", &CENTER_X);
 			sscanf(argv[i + 2], "%lf", &CENTER_Y);
 			i += 2;
 		}
 		/* read radius */
-		else if (input_eq("-r")) {
+		else if (input_eq("-radius")) {
 			sscanf(argv[i + 1], "%lf", &RADIUS);
 			i++;
 		} else {
 			/* error, did not match */
-			print_usage();
+			printf("Cannot parse args.\n");
 			return 1;
 		}
 	}
 
 	SCALE_FACTOR_X = 2 * RADIUS / (double)WIDTH + 1;
 	SCALE_FACTOR_Y = 2 * RADIUS / (double)HEIGHT + 1;
-
+	
 	if (algorithm == 'j') {
 		julia_col();
 	} else if (format == 'b') { /* 1-bit black and white mandelbrot */
