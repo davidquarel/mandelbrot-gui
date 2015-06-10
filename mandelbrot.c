@@ -30,10 +30,14 @@ int COLOR_STEP = 11;
 //int SIZE = 1024;
 int WIDTH = 1024;
 int HEIGHT = 1024;
-//By Default, zooms in on an interesting point
-double CENTER_X = 0.001643721971153;
-double CENTER_Y = -0.822467633298876;
+//By Default, centers in on (0,0), radius 1
+double CENTER_X = 0;
+double CENTER_Y = 0;
 double RADIUS = 1;
+//Default values for julia set iteration
+double JULIA_X = 0.3515;
+double JULIA_Y = 0.42193;
+
 double SCALE_FACTOR_X = 2*2/ (double)1024 + 1;
 double SCALE_FACTOR_Y = 2*2/ (double)1024 + 1;
 
@@ -41,8 +45,6 @@ typedef struct{
 	double re;
 	double im;
 } complex;
-
-#define c_zero make_complex(0, 0);
 
 //Functions for Complex Numbers
 complex make_complex(double real, double imag){
@@ -101,7 +103,7 @@ void mandelbrot_bw(){ //0 if in set, 1 else, B&W
 				c = coord_to_complex(x,y);
 				int iter;
 
-				complex z = c_zero;
+				complex z = make_complex(0,0);
 
 				for(iter=ITER_MAX; iter>0; iter--){
 					if(mag_sq(z) >= BOUND){
@@ -145,7 +147,7 @@ void mandelbrot_gs(){ //8-bit binary greyscale binary
 				c = coord_to_complex(x,y);
 				int iter;
 
-				complex z = c_zero;
+				complex z = make_complex(0,0);
 
 				for(iter=ITER_MAX; iter>0; iter--){
 					if(mag_sq(z) >= BOUND){
@@ -184,15 +186,56 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 			for(x=0; x < WIDTH; x++){
 				current = world + (y * WIDTH) + x;
 				c = coord_to_complex(x,y);
-				z = c_zero;
+				z = make_complex(0, 0);
 				int iter;
 				for(iter=ITER_MAX; iter>0; iter--){
 					if(mag_sq(z) >= BOUND){
 						char val = iter * COLOR_STEP;
-						*current = make_color(val, val, val * 2);
+						*current = make_color(val*2, val, val);
 						break;
 					}
 					z = add(mult(z,z),c);  //z_{i+1} = z_i^2 + c
+				}
+				if(!iter){
+					*current = make_color(0, 0, 0);
+					/*
+					char val = iter_max_col*COLOR_STEP; //choose prime numbers for pretty colours
+					//world[WIDTH*y+x] = make_color(val,val,val*2);
+					*current = make_color(val, val, val * 2);
+					*/
+				}
+				//current++;
+			}
+		}
+	}
+	return;
+}
+
+void julia_col(){ //24-bit, colour changes with iteration depth, binary
+	//color world[SIZE*SIZE];
+	complex JULIA_C = make_complex(JULIA_X,JULIA_Y);
+	char *image = (char *)malloc(HEIGHT * WIDTH * sizeof(color) + 50);
+	int pre = sprintf(image, "P6\n%d %d\n255\n",WIDTH,HEIGHT); //P6, colour binary file
+	color *world = (color *)(image + pre);
+	color *current = world;
+	int x;
+	int y;
+	complex z;
+	#pragma omp parallel private(x, y, z, current)
+	{
+		for(y=0; y < HEIGHT; y++){ 
+			#pragma omp for
+			for(x=0; x < WIDTH; x++){
+				current = world + (y * WIDTH) + x;
+				z = coord_to_complex(x,y);
+				int iter;
+				for(iter=ITER_MAX; iter>0; iter--){
+					if(mag_sq(z) >= BOUND){
+						char val = iter * COLOR_STEP;
+						*current = make_color(val*2, val, val);
+						break;
+					}
+					z = add(mult(z,z),JULIA_C);  //z_{i+1} = z_i^2 + c
 				}
 				if(!iter){
 					*current = make_color(0, 0, 0);
@@ -223,10 +266,16 @@ void mandelbrot_col(){ //24-bit, colour changes with iteration depth, binary
 }
 
 void print_help(){
-	printf("usage: mandelbrot [-h | --help] [-d W H] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]\n"
+	printf("usage: mandelbrot [-h | --help] [-d W H] [-a m|j] [-j X Y] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]\n"
 		"-h | --help: Print this help\n"
 		"-d: dimensions of image, default 1024x1024\n"
 		"W/H: WIDTH/HEIGHT of image\n"
+		"\n"
+		"-a: Choose algorithm to draw picture"
+		"m: Mandelbrot Set"
+		"j: Julia Set and initial value for c"
+		"\n"
+		"-j X Y Choose value of c = X+Yi for computing the Julia set"
 		"\n"
 		"-f: choose format, default greyscale\n"
 		"b: 1-bit B&W, ASCII output\n"
@@ -247,18 +296,31 @@ void print_help(){
 }
 
 void print_usage(){
-	printf("usage: mandelbrot [-h | --help] [-d W H] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]\n");
+	printf("usage: mandelbrot [-h | --help] [-d W H] [-a m|j] [-j X Y] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]\n");
 	return;
 }
 
 int main(int argc, char *argv[]){
-    char format = 'g';
+    char format = 'g'; //Default greyscale
+    char algorithm = 'm'; //Default mandelbrot
     int i;
     
     for(i=1; i<argc; i++){
+    	//print 
     	if(input_eq("-h") || input_eq("--help")){
     		print_help();
     		return 0;
+    	}
+    	//select algorithm
+    	else if(input_eq("-a")){
+    		sscanf(argv[i+1],"%c",&algorithm);
+    		i++;
+    	}
+    	//read value of c = X + Yi for the julia set
+    	else if(input_eq("-j")){ 
+    		sscanf(argv[i+1],"%lf",&JULIA_X);
+    		sscanf(argv[i+2],"%lf",&JULIA_Y);
+    		i+=2;
     	}
     	//read dimension
     	else if(input_eq("-d")){ 
@@ -287,6 +349,7 @@ int main(int argc, char *argv[]){
     		sscanf(argv[i+2],"%lf",&CENTER_Y);
     		i+=2;
     	}
+    	//read radius
     	else if(input_eq("-r")){
     		sscanf(argv[i+1],"%lf",&RADIUS);
     		i++;
@@ -303,7 +366,10 @@ int main(int argc, char *argv[]){
     SCALE_FACTOR_X = 2*RADIUS/ (double)WIDTH + 1;
     SCALE_FACTOR_Y = 2*RADIUS/ (double)HEIGHT + 1;
 
-	if(format == 'b'){ //1-bit black and white mandelbrot
+    if(algorithm == 'j'){
+    	julia_col();
+    }
+	else if(format == 'b'){ //1-bit black and white mandelbrot
 		mandelbrot_bw();
 	}
 

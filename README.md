@@ -1,16 +1,19 @@
 README
 ======
+UPDATE: Now supports the Julia set (only in colour)
 
 To compile, use the provided Makefile by executing `make`.
 Run the program with `./mandelbrot` and pipe the result into a `.ppm` file.
 The program prints a help message with `-h` or `--help` flags.
 
-`usage: mandelbrot [-h | --help] [-d W H] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]`
+`usage: mandelbrot [-h | --help] [-d W H] [-a m|j] [-j X Y] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]`
 
 `-h | --help` Prints the help message
 
 `-d W H` Specifies the size of the image, `W` is the width, `H` is the height.
 Defaults to `-d 1024 1024`
+
+`-a m|j` Selects the algorithm to use (fractal to print), `m` for mandelbrot, `j` for julia set.
 
 `-f b|g|c` Selects the format to print in, defaults to `g` 
 
