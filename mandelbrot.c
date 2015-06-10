@@ -258,7 +258,7 @@ void julia_col()
 
 void print_help()
 {
-	printf( "usage: mandelbrot [-h | -help] [-window WIDTH HEIGHT]" 
+	printf("usage: mandelbrot [-h | -help] [-window WIDTH HEIGHT]" 
 			"[-mandel] [-julia X Y] [-bw | -grey | -color | -color-step STEP]"
 			"[-iter I] [-origin X Y] [-radius R] > file.ppm\n"
 			"-h | --help: Print this help\n"
@@ -291,7 +291,7 @@ int main(int argc, char *argv[])
 	char format = 'g'; /* Default greyscale */
 	char algorithm = 'm'; /* Default mandelbrot */
 	int i;
-	if(argc == 1){
+	if (argc == 1) {
 		print_usage();
 		return 0;
 	}
