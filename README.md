@@ -6,40 +6,43 @@ To compile, use the provided Makefile by executing `make`.
 Run the program with `./mandelbrot` and pipe the result into a `.ppm` file.
 The program prints a help message with `-h` or `--help` flags.
 
-`usage: mandelbrot [-h | --help] [-d W H] [-a m|j] [-j X Y] [-f b|g|c] [-s S] [-i I] [-p X Y] [-r R]`
+`usage: mandelbrot [-h | -help] [-window WIDTH HEIGHT] 
+			[-mandel] [-julia X Y] [-bw | -grey | -color | -color-step STEP]
+			[-iter I] [-origin X Y] [-radius R] > file.ppm`
 
 `-h | --help` Prints the help message
 
-`-d W H` Specifies the size of the image, `W` is the width, `H` is the height.
-Defaults to `-d 1024 1024`
+`-window WIDTH HEIGHT` Specifies the size of the image, defaults to `1024x1024`
 
-`-a m|j` Selects the algorithm to use (fractal to print), `m` for mandelbrot, `j` for julia set.
+`-mandel` Selects the mandelbrot fractal
 
-`-f b|g|c` Selects the format to print in, defaults to `g` 
+`-julia X Y` Selects the Julia Set with C = X + Yi
 
-`b` is black and white in ASCII, which
+All output is in `.ppm` format.
+
+`-bw` Output in black and white ASCII `(P1)`, which
 can be viewed in the terminal and is mostly for debugging purposes. 
 
-`g` is grey scale in binary,
-where the shade of grey represents how fast a point escapes the Mandelbrot set, or black if it never
-leaves the set.
+`-grey` Output is grey scale in binary `(P5)`
+where the shade of grey represents how fast a point escapes.
 
-`c` is color, where the program is ran again and again with different iterations depths, and the images
-are all placed on top of each other. Much more expensive than `b` or `g`, would recommend running it
+`-color` Output is color, where the program is ran again and again with different iterations depths, and the images
+are all placed on top of each other. Much more expensive than `-bw` or `-grey`, would recommend running it
 with a low value for iteration depth, around 30.
 
-`-s S` is the difference in adjacent colours, defaults to 11.
+`-color-step STEP` Same as above, but can manually set colour step (the difference in colour between each iteration
+step, default is 11.)
 
-`-i I` is the iteration depth when calculating the Mandelbrot set in B&W or grey scale, or the number of iterations to do
-if in color. Default value is 255, recommended to lower to 30 when using color.
+`-iter I` is the iteration depth when calculating the fractal in B&W or grey scale, or the number of iterations to do
+if in color. Default value is 100, recommended to lower to 30 when using color.
 
-`-p X Y` is a coordinate point to centre the output picture around, default is `-p 0 0`.
+`-origin X Y` The coordinate point to centre the output picture around, default is `-origin 0 0`.
 
-`-r R` is the "radius", or half of the length of the size of the bounding box in which the picture is drawn, defaults to 2
+`-radius R` is the "radius", or half of the length of the size of the bounding box in which the picture is drawn, defaults to 2
 
 The bottom left corner of the bounding box is (X-R,Y-R), and the top right is (X+R,Y+R)
 
-Example: `-p 1 0 2` will draw the bounding box such that the bottom left corner is at (-1,-2), top right at (3,2).
+Example: `-origin 1 0 -radius 2` will draw the bounding box such that the bottom left corner is at (-1,-2), top right at (3,2).
 	
 
 <!--
