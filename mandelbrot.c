@@ -21,10 +21,14 @@
 #include <string.h>
 #include <unistd.h>
 #include <omp.h>
+#ifndef DCOMPLEX_H
+#include "dcomplex.h"
+#define DCOMPLEX_H
+#endif
 
 #define input_eq(s1) !(strcmp(argv[i],s1))
 
-const double BOUND = 4; //square roots are expensive
+const double BOUND = 4; /* square roots are expensive */
 int ITER_MAX = 100;
 int COLOR_STEP = 11;
 
@@ -40,42 +44,6 @@ double JULIA_Y = 0.42193;
 
 double SCALE_FACTOR_X = 2 * 2 / (double)1024 + 1;
 double SCALE_FACTOR_Y = 2 * 2 / (double)1024 + 1;
-
-typedef struct {
-	double re;
-	double im;
-} complex;
-
-/* Functions for Complex Numbers */
-complex make_complex(double real, double imag)
-{
-	complex new_complex = {real, imag};
-	return new_complex;
-}
-
-complex coord_to_complex(int x, int y)
-{
-	double new_x;
-	double new_y;
-	new_x = (double)x * 2 * RADIUS / (double)WIDTH + CENTER_X - RADIUS; //scale [0,SIZE] to [X-R,X+R]
-	new_y = (double)y * 2 * RADIUS / (double)HEIGHT - CENTER_Y - RADIUS; //scale [0,SIZE] to [Y-R,Y+R]
-	return make_complex(new_x, new_y);
-}
-
-complex add(complex a, complex b)
-{
-	return make_complex(a.re + b.re, a.im + b.im);
-}
-
-complex mult(complex a, complex b)
-{
-	return make_complex(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
-}
-
-double mag_sq(complex a)
-{
-	return (a.re * a.re + a.im * a.im);
-}
 
 typedef struct {
 	char r;
@@ -105,7 +73,7 @@ void mandelbrot_bw()
 		for (y = 0; y < HEIGHT; y++) {
 			current = start + (y * HEIGHT * 2 + y);
 			for (x = 0; x < WIDTH; x++) {
-				c = coord_to_complex(x, y);
+				c = coord_to_complex(x, y, WIDTH, HEIGHT, CENTER_X, CENTER_Y, RADIUS);
 				int iter;
 
 				complex z = make_complex(0, 0);
@@ -150,7 +118,7 @@ void mandelbrot_gs()
 		for (y = 0; y < HEIGHT; y++) {
 			current = start + (y * HEIGHT);
 			for (x = 0; x < WIDTH; x++) {
-				c = coord_to_complex(x, y);
+				c = coord_to_complex(x, y, WIDTH, HEIGHT, CENTER_X, CENTER_Y, RADIUS);
 				int iter;
 
 				complex z = make_complex(0, 0);
@@ -192,7 +160,7 @@ void mandelbrot_col()
 			#pragma omp for
 			for (x = 0; x < WIDTH; x++) {
 				current = world + (y * WIDTH) + x;
-				c = coord_to_complex(x, y);
+				c = coord_to_complex(x, y, WIDTH, HEIGHT, CENTER_X, CENTER_Y, RADIUS);
 				z = make_complex(0, 0);
 				int iter;
 				for (iter = ITER_MAX; iter > 0; iter--) {
@@ -232,7 +200,7 @@ void julia_col()
 			#pragma omp for
 			for (x = 0; x < WIDTH; x++) {
 				current = world + (y * WIDTH) + x;
-				z = coord_to_complex(x, y);
+				z = coord_to_complex(x, y, WIDTH, HEIGHT, CENTER_X, CENTER_Y, RADIUS);
 				int iter;
 				for (iter = ITER_MAX; iter > 0; iter--) {
 					if (mag_sq(z) >= BOUND) {
