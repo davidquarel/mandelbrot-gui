@@ -1,6 +1,6 @@
 *.ppm
 *.s
-mandelbrot
+fractal
 *.png
 *.swp
 *.o

@@ -1,7 +1,4 @@
-#ifndef DCOMPLEX_H
 #include "dcomplex.h"
-#define DCOMPLEX_H
-#endif
 
 complex make_complex(double real, double imag)
 {
