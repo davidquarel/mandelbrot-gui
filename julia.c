@@ -1,15 +1,15 @@
 #include "julia.h"
 
-void julia_col(int width,
-	       int height,
-	       double center_x,
-	       double center_y,
-	       double radius,
-	       double bound,
-	       int iter_max,
-	       int color_step,
-	       double julia_x,
-	       double julia_y)
+char *julia_col(int width,
+	        int height,
+	        double center_x,
+	        double center_y,
+	        double radius,
+	        double bound,
+	        int iter_max,
+	        int color_step,
+	        double julia_x,
+	        double julia_y)
 {
 	complex julia_c = make_complex(julia_x, julia_y);
 	char *image = (char *)malloc(height * width * sizeof(color) + 50);
@@ -42,10 +42,6 @@ void julia_col(int width,
 		}
 	}
 
-	write(1, image, height * width * sizeof(color) + pre);
-	free(image);
-
-	return;
-
+	return image;
 }
 

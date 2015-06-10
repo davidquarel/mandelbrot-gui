@@ -5,7 +5,7 @@ default: all
 all: fractal
 
 fractal: fractal.c fractal.h mandelbrot.o julia.o dcomplex.o color.o
-	gcc fractal.c mandelbrot.o julia.o dcomplex.o color.o $(CFLAGS) -fopenmp -o fractal
+	gcc fractal.c mandelbrot.o julia.o dcomplex.o color.o $(CFLAGS) -fopenmp -lm -o fractal
 
 julia.o: julia.c julia.h
 	gcc julia.c -c -o julia.o

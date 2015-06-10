@@ -4,7 +4,10 @@ int main(int argc, char *argv[])
 {
 	char format = 'g'; /* Default greyscale */
 	char algorithm = 'm'; /* Default mandelbrot */
+	char *image = 0;
 	int i;
+	size_t len = 0;
+
 	if (argc == 1) {
 		print_usage();
 		return 0;
@@ -72,30 +75,35 @@ int main(int argc, char *argv[])
 
 	scale_factor_x = 2 * radius / (double)width + 1;
 	scale_factor_y = 2 * radius / (double)height + 1;
-	
-	if (algorithm == 'j') {
-	       julia_col(width,
-	       height,
-	       center_x,
-	       center_y,
-	       radius,
-	       bound,
-	       iter_max,
-	       color_step,
-	       julia_x,
-	       julia_y);
 
+	if (algorithm == 'j') {
+		image = julia_col(width,
+				height,
+				center_x,
+				center_y,
+				radius,
+				bound,
+				iter_max,
+				color_step,
+				julia_x,
+				julia_y);
+		len = (width * height * sizeof(color) + 9 + log10(width) + log10(height));
 	} else if (format == 'b') { /* 1-bit black and white mandelbrot */
-		mandelbrot_bw(width, height, center_x, center_y, radius, bound, iter_max, color_step);
+		image = mandelbrot_bw(width, height, center_x, center_y, radius, bound, iter_max, color_step);
+		len = (width * height * sizeof(char) * 2 + height + 21 + log10(width) + log10(height));
 
 	}
 	else if (format == 'g') { /* 8-bit greyscale mandelbrot */
-		mandelbrot_gs(width, height, center_x, center_y, radius, bound, iter_max, color_step);
-
+		image = mandelbrot_gs(width, height, center_x, center_y, radius, bound, iter_max, color_step);
+		len = (width * height * sizeof(char) + 9 + log10(width) + log10(height));
 	}
 	else if (format == 'c') { /* 24-bit colour, changes colour with iteration depth */
-		mandelbrot_col(width, height, center_x, center_y, radius, bound, iter_max, color_step);
+		image = mandelbrot_col(width, height, center_x, center_y, radius, bound, iter_max, color_step);
+		len = (width * height * sizeof(color) + 9 + log10(width) + log10(height));
 	}
+
+	write(1, image, len);
+	free(image);
 
 	return 0;
 }
@@ -126,7 +134,7 @@ void print_help()
 			"-radius R: Output image will be the bounding box [X-R,Y-R] to [X+R,Y+R]\n"
 			"Will default to drawing bounding box [-1,-1] to [1,1]\n"
 			"Pipe the result into file.ppm\n"
-			);
+	      );
 	return;
 }
 

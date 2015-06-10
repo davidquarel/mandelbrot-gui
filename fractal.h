@@ -4,6 +4,7 @@
  */
 
 #include <string.h>
+#include <math.h>
 
 #include "julia.h"
 #include "mandelbrot.h"

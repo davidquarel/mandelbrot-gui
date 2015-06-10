@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <omp.h>
 
 #ifndef DCOMPLEX_H
@@ -14,7 +15,7 @@
 
 #include "unistd.h"
 
-void mandelbrot_bw(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
-void mandelbrot_gs(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
-void mandelbrot_col(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
+char *mandelbrot_bw(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
+char *mandelbrot_gs(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
+char *mandelbrot_col(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
 

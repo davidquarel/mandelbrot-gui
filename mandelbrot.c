@@ -7,14 +7,14 @@
 
 #include "mandelbrot.h"
 
-void mandelbrot_bw(int width,
-		   int height,
-		   double center_x,
-		   double center_y,
-		   double radius,
-		   double bound,
-		   int iter_max,
-		   int color_step)
+char *mandelbrot_bw(int width,
+		    int height,
+		    double center_x,
+		    double center_y,
+		    double radius,
+		    double bound,
+		    int iter_max,
+		    int color_step)
 {
 	char *image = (char *)malloc(width * height * sizeof(char) * 2 + height + 16);
 	char *start = image + sprintf(image, "P1\n%d %d\n", width, height);
@@ -51,20 +51,18 @@ void mandelbrot_bw(int width,
 			*current = '\n';
 		}
 	}
-	puts(image);
-	free(image);
-	return;
+	return image;
 }
 
 /* 8-bit binary greyscale binary */
-void mandelbrot_gs(int width,
-		   int height,
-		   double center_x,
-		   double center_y,
-		   double radius,
-		   double bound,
-		   int iter_max,
-		   int color_step)
+char *mandelbrot_gs(int width,
+		    int height,
+		    double center_x,
+		    double center_y,
+		    double radius,
+		    double bound,
+		    int iter_max,
+		    int color_step)
 {
 	char *image = (char *)malloc(width * height * sizeof(char) + 50);
 	int pre = sprintf(image, "P5\n%d %d\n255\n", width, height);
@@ -101,20 +99,18 @@ void mandelbrot_gs(int width,
 			}
 		}
 	}
-	write(1, image, pre + height * width);
-	free(image);
-	return;
+	return image;
 }
 
 /* 24-bit, colour changes with iteration depth, binary */
-void mandelbrot_col(int width,
-		    int height,
-		    double center_x,
-		    double center_y,
-		    double radius,
-		    double bound,
-		    int iter_max,
-		    int color_step)
+char *mandelbrot_col(int width,
+		     int height,
+		     double center_x,
+		     double center_y,
+		     double radius,
+		     double bound,
+		     int iter_max,
+		     int color_step)
 {
 	char *image = (char *)malloc(height * width * sizeof(color) + 50);
 	int pre = sprintf(image, "P6\n%d %d\n255\n", width, height); /* P6, colour binary file */
@@ -147,9 +143,6 @@ void mandelbrot_col(int width,
 			}
 		}
 	}
-	write(1, image, height * width * sizeof(color) + pre);
-	free(image);
-
-	return;
+	return image;
 }
 
