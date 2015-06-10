@@ -232,7 +232,7 @@ void julia_col(){ //24-bit, colour changes with iteration depth, binary
 				for(iter=ITER_MAX; iter>0; iter--){
 					if(mag_sq(z) >= BOUND){
 						char val = iter * COLOR_STEP;
-						*current = make_color(val*2, val, val);
+						*current = make_color(val, val, val*2);
 						break;
 					}
 					z = add(mult(z,z),JULIA_C);  //z_{i+1} = z_i^2 + c
