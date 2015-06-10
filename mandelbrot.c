@@ -282,7 +282,7 @@ int main(int argc, char *argv[]){
     		i++;
     	}
     	//read zoom
-    	else if(input_eq("-z")){ 
+    	else if(input_eq("-p")){ 
     		sscanf(argv[i+1],"%lf",&CENTER_X);
     		sscanf(argv[i+2],"%lf",&CENTER_Y);
     		i+=2;
