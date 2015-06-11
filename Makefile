@@ -4,6 +4,8 @@ default: all
 
 all: fractal
 
+remake: clean fractal
+
 fractal: fractal.c fractal.h mandelbrot.o julia.o dcomplex.o color.o
 	gcc fractal.c mandelbrot.o julia.o dcomplex.o color.o $(CFLAGS) -fopenmp -lm -o fractal
 
