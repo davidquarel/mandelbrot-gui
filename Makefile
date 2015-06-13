@@ -10,7 +10,7 @@ fractal: fractal.c fractal.h mandelbrot.o julia.o dcomplex.o color.o
 	gcc fractal.c mandelbrot.o julia.o dcomplex.o color.o $(CFLAGS) -fopenmp -lm -o fractal
 
 julia.o: julia.c julia.h
-	gcc julia.c -c -o julia.o
+	gcc julia.c $(CFLAGS) -fopenmp -c -o julia.o
 
 mandelbrot.o: mandelbrot.c
 	gcc mandelbrot.c $(CFLAGS) -fopenmp -c -o mandelbrot.o
