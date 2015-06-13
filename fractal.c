@@ -77,28 +77,19 @@ int main(int argc, char *argv[])
 	scale_factor_y = 2 * radius / (double)height + 1;
 
 	if (algorithm == 'j') {
-		image = julia_col(width,
-				height,
-				center_x,
-				center_y,
-				radius,
-				bound,
-				iter_max,
-				color_step,
-				julia_x,
-				julia_y);
+		image = julia_col(width, height, julia_x, julia_y);
 		len = (width * height * sizeof(color) + 9 + log10(width) + log10(height));
 	} else if (format == 'b') { /* 1-bit black and white mandelbrot */
-		image = mandelbrot_bw(width, height, center_x, center_y, radius, bound, iter_max, color_step);
+		image = mandelbrot_bw(width, height);
 		len = (width * height * sizeof(char) * 2 + height + 21 + log10(width) + log10(height));
 
 	}
 	else if (format == 'g') { /* 8-bit greyscale mandelbrot */
-		image = mandelbrot_gs(width, height, center_x, center_y, radius, bound, iter_max, color_step);
+		image = mandelbrot_gs(width, height);
 		len = (width * height * sizeof(char) + 9 + log10(width) + log10(height));
 	}
 	else if (format == 'c') { /* 24-bit colour, changes colour with iteration depth */
-		image = mandelbrot_col(width, height, center_x, center_y, radius, bound, iter_max, color_step);
+		image = mandelbrot_col(width, height);
 		len = (width * height * sizeof(color) + 9 + log10(width) + log10(height));
 	}
 

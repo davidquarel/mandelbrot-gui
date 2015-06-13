@@ -7,19 +7,16 @@
 
 #include "mandelbrot.h"
 
-char *mandelbrot_bw(int width,
-		    int height,
-		    double center_x,
-		    double center_y,
-		    double radius,
-		    double bound,
-		    int iter_max,
-		    int color_step)
+char *mandelbrot_bw(int width, int height)
 {
 	char *image = (char *)malloc(width * height * sizeof(char) * 2 + height + 16);
 	char *start = image + sprintf(image, "P1\n%d %d\n", width, height);
 	char *current;
-
+	extern double center_x;
+	extern double center_y;
+	extern double radius;
+	extern double bound;
+	extern int iter_max;
 	int x;
 	int y;
 	complex c;
@@ -55,21 +52,17 @@ char *mandelbrot_bw(int width,
 }
 
 /* 8-bit binary greyscale binary */
-char *mandelbrot_gs(int width,
-		    int height,
-		    double center_x,
-		    double center_y,
-		    double radius,
-		    double bound,
-		    int iter_max,
-		    int color_step)
+char *mandelbrot_gs(int width, int height)
 {
 	char *image = (char *)malloc(width * height * sizeof(char) + 50);
 	int pre = sprintf(image, "P5\n%d %d\n255\n", width, height);
-
 	char *start = image + pre;
 	char *current;
-
+	extern double center_x;
+	extern double center_y;
+	extern double radius;
+	extern double bound;
+	extern int iter_max;
 	int x;
 	int y;
 	complex c;
@@ -103,19 +96,18 @@ char *mandelbrot_gs(int width,
 }
 
 /* 24-bit, colour changes with iteration depth, binary */
-char *mandelbrot_col(int width,
-		     int height,
-		     double center_x,
-		     double center_y,
-		     double radius,
-		     double bound,
-		     int iter_max,
-		     int color_step)
+char *mandelbrot_col(int width, int height)
 {
 	char *image = (char *)malloc(height * width * sizeof(color) + 50);
 	int pre = sprintf(image, "P6\n%d %d\n255\n", width, height); /* P6, colour binary file */
 	color *world = (color *)(image + pre);
 	color *current = world;
+	extern double center_x;
+	extern double center_y;
+	extern double radius;
+	extern double bound;
+	extern int iter_max;
+	extern int color_step;
 	int x;
 	int y;
 	complex c;

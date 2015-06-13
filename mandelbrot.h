@@ -15,7 +15,7 @@
 
 #include "unistd.h"
 
-char *mandelbrot_bw(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
-char *mandelbrot_gs(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
-char *mandelbrot_col(int width, int height, double center_x, double center_y, double radius, double bound, int iter_max, int color_step);
+char *mandelbrot_bw(int width, int height);
+char *mandelbrot_gs(int width, int height);
+char *mandelbrot_col(int width, int height);
 
