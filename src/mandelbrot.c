@@ -37,7 +37,7 @@ char *mandelbrot_bw(int width, int height)
 						*(current++) = '0';
 						break;
 					}
-					z = add(mult(z, z), c);  /* iterate again, z_{i+1} = z_i^2 + c */
+					z = add(square(z), c);  /* iterate again, z_{i+1} = z_i^2 + c */
 				}
 				if (!iter) {
 					/* printf("1 "); //point stayed in set after ITER_LIMIT_BW iterations, in set */
@@ -83,7 +83,7 @@ char *mandelbrot_gs(int width, int height)
 						*(current++) = iter;
 						break;
 					}
-					z = add(mult(z, z), c);  /* z_{i+1} = z_i^2 + c */
+					z = add(square(z), c);  /* z_{i+1} = z_i^2 + c */
 				}
 				if (!iter) {
 					/* putchar(0); */
@@ -124,10 +124,10 @@ char *mandelbrot_col(int width, int height)
 				for (iter = iter_max; iter > 0; iter--) {
 					if (mag_sq(z) >= bound) {
 						char val = iter * color_step;
-						*current = make_color(val*2, val, val);
+						*current = make_color(val, val, val*2);
 						break;
 					}
-					z = add(mult(z, z), c);  /* z_{i+1} = z_i^2 + c */
+					z = add(square(z), c);  /* z_{i+1} = z_i^2 + c */
 				}
 				if (!iter) {
 					*current = make_color(0, 0, 0);

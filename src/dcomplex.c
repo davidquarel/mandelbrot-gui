@@ -31,6 +31,11 @@ complex mult(complex a, complex b)
 	return make_complex(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
 }
 
+complex square(complex a)
+{
+	return make_complex(a.re * a.re - a.im * a.im, 2 * a.re * a.im);
+}
+
 double mag_sq(complex a)
 {
 	return (a.re * a.re + a.im * a.im);

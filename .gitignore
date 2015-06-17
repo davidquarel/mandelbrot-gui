@@ -4,4 +4,8 @@ fractal
 *.png
 *.swp
 *.o
-
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.tex.bak

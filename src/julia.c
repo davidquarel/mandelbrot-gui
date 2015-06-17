@@ -30,7 +30,7 @@ char *julia_col(int width, int height, double julia_x, double julia_y)
 						*current = make_color(val, val, val*2);
 						break;
 					}
-					z = add(mult(z, z), julia_c);  /* z_{i+1} = z_i^2 + c */
+					z = add(square(z), julia_c);  /* z_{i+1} = z_i^2 + c */
 				}
 				if (!iter) {
 					*current = make_color(0, 0, 0);
