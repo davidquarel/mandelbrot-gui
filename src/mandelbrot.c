@@ -24,7 +24,7 @@ char *mandelbrot_bw(int width, int height)
 	{
 		#pragma omp for
 		for (y = 0; y < height; y++) {
-			current = start + (y * height * 2 + y);
+			current = start + (y * width * 2 + y);
 			for (x = 0; x < width; x++) {
 				c = coord_to_complex(x, y, width, height, center_x, center_y, radius);
 				int iter;

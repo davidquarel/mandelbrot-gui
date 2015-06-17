@@ -81,8 +81,7 @@ int main(int argc, char *argv[])
 		len = (width * height * sizeof(color) + 9 + log10(width) + log10(height));
 	} else if (format == 'b') { /* 1-bit black and white mandelbrot */
 		image = mandelbrot_bw(width, height);
-		len = (width * height * sizeof(char) * 2 + height + 21 + log10(width) + log10(height));
-
+		len = (width * height * sizeof(char) * 2 + height + 5 + log10(width) + log10(height));
 	}
 	else if (format == 'g') { /* 8-bit greyscale mandelbrot */
 		image = mandelbrot_gs(width, height);
