@@ -1,4 +1,5 @@
 *.ppm
+*.bmp
 *.s
 fractal
 *.png
