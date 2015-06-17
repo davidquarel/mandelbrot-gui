@@ -149,7 +149,7 @@ char *mandelbrot_col(int width, int height)
 /* 24-bit bmp output */
 char *mandelbrot_bmp(int width, int height)
 {
-	int padding = (4 - (width % 4)) % 4;
+	int padding = (4 - ((width * 3) % 4)) % 4;
 	int size = height * ((width * 3) + padding) + 26;
 	fprintf(stderr, "width: %d height: %d padding: %d size: %d\n", width, height, padding, size);
 	char *image = (char *)calloc(size, 1);

@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 			break;
 		case 't':
 			image = mandelbrot_bmp(width, height);
-			int padding = (4 - (width % 4)) % 4;
+			int padding = (4 - ((width * 3) % 4)) % 4;
 			len = height * ((width * 3) + padding) + 26;
 			break;
 		}
