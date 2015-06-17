@@ -45,9 +45,6 @@ int main(int argc, char *argv[])
 		else if (input_eq("-color")) {
 			format = 'c';
 		}
-		else if (input_eq("-bmp")) {
-			format = 't';
-		}
 		/* read color step */
 		else if (input_eq("-color-step")) {
 			format = 'c';
@@ -82,25 +79,17 @@ int main(int argc, char *argv[])
 	if (algorithm == 'j') {
 		image = julia_col(width, height, julia_x, julia_y);
 		len = (width * height * sizeof(color) + 9 + log10(width) + log10(height));
-	} else {
-		switch (format) {
-		case 'b':
-			image = mandelbrot_bw(width, height);
-			len = (width * height * sizeof(char) * 2 + height + 5 + log10(width) + log10(height));
-		case 'g':
-			image = mandelbrot_gs(width, height);
-			len = (width * (height + 1) * sizeof(char) + 10 + log10(width) + log10(height));
-			break;
-		case 'c':
-			image = mandelbrot_col(width, height);
-			len = (width * (height + 1) * sizeof(color) + 10 + log10(width) + log10(height));
-			break;
-		case 't':
-			image = mandelbrot_bmp(width, height);
-			int padding = (4 - (width % 4)) % 4;
-			len = height * ((width * 3) + padding) + 26;
-			break;
-		}
+	} else if (format == 'b') { /* 1-bit black and white mandelbrot */
+		image = mandelbrot_bw(width, height);
+		len = (width * height * sizeof(char) * 2 + height + 5 + log10(width) + log10(height));
+	}
+	else if (format == 'g') { /* 8-bit greyscale mandelbrot */
+		image = mandelbrot_gs(width, height);
+		len = (width * (height + 1) * sizeof(char) + 10 + log10(width) + log10(height));
+	}
+	else if (format == 'c') { /* 24-bit colour, changes colour with iteration depth */
+		image = mandelbrot_col(width, height);
+		len = (width * (height + 1) * sizeof(color) + 10 + log10(width) + log10(height));
 	}
 
 	write(1, image, len);

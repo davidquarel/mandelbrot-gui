@@ -18,5 +18,4 @@
 char *mandelbrot_bw(int width, int height);
 char *mandelbrot_gs(int width, int height);
 char *mandelbrot_col(int width, int height);
-char *mandelbrot_bmp(int width, int height);
 
