@@ -86,11 +86,11 @@ int main(int argc, char *argv[])
 	}
 	else if (format == 'g') { /* 8-bit greyscale mandelbrot */
 		image = mandelbrot_gs(width, height);
-		len = (width * height * sizeof(char) + 9 + log10(width) + log10(height));
+		len = (width * (height + 1) * sizeof(char) + 10 + log10(width) + log10(height));
 	}
 	else if (format == 'c') { /* 24-bit colour, changes colour with iteration depth */
 		image = mandelbrot_col(width, height);
-		len = (width * height * sizeof(color) + 9 + log10(width) + log10(height));
+		len = (width * (height + 1) * sizeof(color) + 10 + log10(width) + log10(height));
 	}
 
 	write(1, image, len);
