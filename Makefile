@@ -4,7 +4,7 @@ default: all
 
 all: bin/fractal bin/fractalgui
 
-remake: clean bin/fractal
+remake: clean all
 
 bin/fractal: src/fractal.c src/fractal.h bin/mandelbrot.o bin/julia.o bin/dcomplex.o bin/color.o
 	gcc src/fractal.c bin/mandelbrot.o bin/julia.o bin/dcomplex.o bin/color.o $(CFLAGS) -fopenmp -lm -o bin/fractal
