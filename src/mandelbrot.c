@@ -155,7 +155,6 @@ char *mandelbrot_bmp(struct mandelparams p)
 		for (y = 0; y < p.height; y++) {
 			#pragma omp for
 			for (x = 0; x < p.width; x++) {
-				//current = world + (y * (width + padding)) + x;
 				current = (color *)(((char *)(world + (y * p.width) + x)) + (padding * y));
 				c = coord_to_complex(x, y, p.width, p.height, p.center_x, p.center_y, p.radius);
 				z = make_complex(0, 0);

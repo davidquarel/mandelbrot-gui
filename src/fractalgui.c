@@ -14,8 +14,9 @@ int main(int argv, char **argc)
 	TTF_Font *font;
 	int padding;
 	int loop;
-
 	struct mandelparams p;
+	char *im;
+
 	p.width = 480;
 	p.height = 480;
 	p.center_x = 0;
@@ -66,7 +67,8 @@ int main(int argv, char **argc)
 	SDL_UpdateRect(display, 0, 0, 0, 0);
 
 	padding = (4 - ((p.width * 3) % 4)) % 4;
-	image = SDL_LoadBMP_RW(SDL_RWFromMem((void *)mandelbrot_bmp(p), p.height * ((p.width * 3) + padding) + 26), 0);
+	im = mandelbrot_bmp(p);
+	image = SDL_LoadBMP_RW(SDL_RWFromMem((void *)im, p.height * ((p.width * 3) + padding) + 26), 0);
 
 	SDL_GetClipRect(image, &imagerect);
 	SDL_GetClipRect(display, &screenrect);
@@ -88,6 +90,20 @@ int main(int argv, char **argc)
 						break;
 				}
 			} else if (event.type == SDL_MOUSEBUTTONDOWN) {
+				SDL_FreeSurface(image);
+				free(im);
+				/* move viewpoint here */
+				p.center_x = p.center_x + ((((double)event.button.x / ((double)p.width / 2.0)) - 1) * p.radius);
+				p.center_y = p.center_y + ((((double)event.button.y / ((double)p.width / 2.0)) - 1) * p.radius);
+				if (event.button.button == SDL_BUTTON_LEFT) {
+					p.radius /= 2;
+				} else if (event.button.button == SDL_BUTTON_RIGHT) {
+					p.radius *= 2;
+				}
+				im = mandelbrot_bmp(p);
+				image = SDL_LoadBMP_RW(SDL_RWFromMem((void *)im, p.height * ((p.width * 3) + padding) + 26), 0);
+				SDL_BlitSurface(image, &imagerect, display, &screenrect);
+
 			}
 		}
 		SDL_UpdateRect(display, 0, 0, 0, 0);
