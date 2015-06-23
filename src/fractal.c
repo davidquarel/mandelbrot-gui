@@ -1,4 +1,7 @@
+#ifndef FRACTAL_H
+#define FRACTAL_H
 #include "fractal.h"
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -7,6 +10,19 @@ int main(int argc, char *argv[])
 	char *image = 0;
 	int i;
 	size_t len = 0;
+	struct mandelparams p;
+	p.width = 1024;
+	p.height = 1024;
+	p.center_x = 0;
+	p.center_y = 0;
+	p.scale_factor_x = 2 * 2 / (double)1024 + 1;
+	p.scale_factor_y = 2 * 2 / (double)1024 + 1;
+	p.radius = 2;
+	p.bound = 4;
+	p.iter_max = 100;
+	p.color_step = 11;
+	double julia_x = 0.3515;
+	double julia_y = 0.42193;
 
 	if (argc == 1) {
 		print_usage();
@@ -20,8 +36,8 @@ int main(int argc, char *argv[])
 		}
 		/* read window size */
 		else if (input_eq("-window")) { 
-			sscanf(argv[i + 1], "%d", &width);
-			sscanf(argv[i + 2], "%d", &height);
+			sscanf(argv[i + 1], "%d", &p.width);
+			sscanf(argv[i + 2], "%d", &p.height);
 			i += 2;
 		}
 		/* select algorithm */
@@ -51,23 +67,23 @@ int main(int argc, char *argv[])
 		/* read color step */
 		else if (input_eq("-color-step")) {
 			format = 'c';
-			sscanf(argv[i + 1], "%d", &color_step);
+			sscanf(argv[i + 1], "%d", &p.color_step);
 			i++;
 		}	
 		/* read iter */
 		else if (input_eq("-iter")) { 
-			sscanf(argv[i + 1], "%d", &iter_max);
+			sscanf(argv[i + 1], "%d", &p.iter_max);
 			i++;
 		}
 		/* read origin */
 		else if (input_eq("-origin")) { 
-			sscanf(argv[i + 1], "%lf", &center_x);
-			sscanf(argv[i + 2], "%lf", &center_y);
+			sscanf(argv[i + 1], "%lf", &p.center_x);
+			sscanf(argv[i + 2], "%lf", &p.center_y);
 			i += 2;
 		}
 		/* read radius */
 		else if (input_eq("-radius")) {
-			sscanf(argv[i + 1], "%lf", &radius);
+			sscanf(argv[i + 1], "%lf", &p.radius);
 			i++;
 		} else {
 			/* error, did not match */
@@ -76,29 +92,29 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	scale_factor_x = 2 * radius / (double)width + 1;
-	scale_factor_y = 2 * radius / (double)height + 1;
+	p.scale_factor_x = 2 * p.radius / (double)p.width + 1;
+	p.scale_factor_y = 2 * p.radius / (double)p.height + 1;
 
 	if (algorithm == 'j') {
-		image = julia_col(width, height, julia_x, julia_y);
-		len = (width * height * sizeof(color) + 9 + log10(width) + log10(height));
+		image = julia_col(p, julia_x, julia_y);
+		len = (p.width * p.height * sizeof(color) + 9 + log10(p.width) + log10(p.height));
 	} else {
 		switch (format) {
 		case 'b':
-			image = mandelbrot_bw(width, height);
-			len = (width * height * sizeof(char) * 2 + height + 5 + log10(width) + log10(height));
+			image = mandelbrot_bw(p);
+			len = (p.width * p.height * sizeof(char) * 2 + p.height + 5 + log10(p.width) + log10(p.height));
 		case 'g':
-			image = mandelbrot_gs(width, height);
-			len = (width * (height + 1) * sizeof(char) + 10 + log10(width) + log10(height));
+			image = mandelbrot_gs(p);
+			len = (p.width * (p.height + 1) * sizeof(char) + 10 + log10(p.width) + log10(p.height));
 			break;
 		case 'c':
-			image = mandelbrot_col(width, height);
-			len = (width * (height + 1) * sizeof(color) + 10 + log10(width) + log10(height));
+			image = mandelbrot_col(p);
+			len = (p.width * (p.height + 1) * sizeof(color) + 10 + log10(p.width) + log10(p.height));
 			break;
 		case 't':
-			image = mandelbrot_bmp(width, height);
-			int padding = (4 - ((width * 3) % 4)) % 4;
-			len = height * ((width * 3) + padding) + 26;
+			image = mandelbrot_bmp(p);
+			int padding = (4 - ((p.width * 3) % 4)) % 4;
+			len = p.height * ((p.width * 3) + padding) + 26;
 			break;
 		}
 	}

@@ -15,6 +15,18 @@ int main(int argv, char **argc)
 	int padding;
 	int loop;
 
+	struct mandelparams p;
+	p.width = 480;
+	p.height = 480;
+	p.center_x = 0;
+	p.center_y = 0;
+	p.scale_factor_x = 2 * 2 / (double)1024 + 1;
+	p.scale_factor_y = 2 * 2 / (double)1024 + 1;
+	p.radius = 2;
+	p.bound = 4;
+	p.iter_max = 100;
+	p.color_step = 11;
+
 	white.r = 255;
 	white.g = 255;
 	white.b = 255;
@@ -30,6 +42,8 @@ int main(int argv, char **argc)
 		SDL_Quit();
 		exit(-1);
 	}
+
+	SDL_WM_SetCaption("Mandelbrot", 0);
 
 	if (TTF_Init() < 0) {
 		perror("Error initialising SDL_ttf");
@@ -51,8 +65,8 @@ int main(int argv, char **argc)
 	SDL_BlitSurface(loading, 0, display, 0);
 	SDL_UpdateRect(display, 0, 0, 0, 0);
 
-	padding = (4 - ((width * 3) % 4)) % 4;
-	image = SDL_LoadBMP_RW(SDL_RWFromMem((void *)mandelbrot_bmp(480, 480), height * ((width * 3) + padding) + 26), 0);
+	padding = (4 - ((p.width * 3) % 4)) % 4;
+	image = SDL_LoadBMP_RW(SDL_RWFromMem((void *)mandelbrot_bmp(p), p.height * ((p.width * 3) + padding) + 26), 0);
 
 	SDL_GetClipRect(image, &imagerect);
 	SDL_GetClipRect(display, &screenrect);
@@ -73,11 +87,14 @@ int main(int argv, char **argc)
 					default:
 						break;
 				}
+			} else if (event.type == SDL_MOUSEBUTTONDOWN) {
 			}
 		}
 		SDL_UpdateRect(display, 0, 0, 0, 0);
 		SDL_Delay(TICK_INTERVAL);
 	}
+
+	SDL_FreeSurface(display);
  
 	SDL_Quit();
  

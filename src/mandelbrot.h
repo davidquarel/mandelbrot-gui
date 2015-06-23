@@ -13,10 +13,15 @@
 #define COLOR_H
 #endif
 
+#ifndef FRACTAL_H
+#define FRACTAL_H
+#include "fractal.h"
+#endif
+
 #include "unistd.h"
 
-char *mandelbrot_bw(int width, int height);
-char *mandelbrot_gs(int width, int height);
-char *mandelbrot_col(int width, int height);
-char *mandelbrot_bmp(int width, int height);
+char *mandelbrot_bw(struct mandelparams p);
+char *mandelbrot_gs(struct mandelparams p);
+char *mandelbrot_col(struct mandelparams p);
+char *mandelbrot_bmp(struct mandelparams p);
 

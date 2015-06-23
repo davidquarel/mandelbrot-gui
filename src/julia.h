@@ -3,14 +3,19 @@
 #include <unistd.h>
 
 #ifndef DCOMPLEX_H
-#include "dcomplex.h"
 #define DCOMPLEX_H
+#include "dcomplex.h"
 #endif
 
 #ifndef COLOR_H
-#include "color.h"
 #define COLOR_H
+#include "color.h"
 #endif
 
-char *julia_col(int width, int height, double julia_x, double julia_y);
+#ifndef FRACTAL_H
+#define FRACTAL_H
+#include "fractal.h"
+#endif
+
+char *julia_col(struct mandelparams p, int julia_x, int julia_y);
 
