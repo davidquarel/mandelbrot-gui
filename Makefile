@@ -10,7 +10,7 @@ bin/fractal: src/fractal.c src/fractal.h bin/mandelbrot.o bin/julia.o bin/dcompl
 	gcc src/fractal.c bin/mandelbrot.o bin/julia.o bin/dcomplex.o bin/color.o $(CFLAGS) -fopenmp -lm -o bin/fractal
 
 bin/fractalgui: src/fractalgui.c src/fractalgui.h src/fractal.h bin/mandelbrot.o bin/dcomplex.o bin/color.o
-	gcc src/fractalgui.c bin/mandelbrot.o bin/dcomplex.o bin/color.o $(CFLAGS) -fopenmp -lm -lSDL $(pkg-config --cflags sdl) -o bin/fractalgui
+	gcc src/fractalgui.c bin/mandelbrot.o bin/dcomplex.o bin/color.o $(CFLAGS) -fopenmp -lm -lSDL -lSDL_ttf $(pkg-config --cflags sdl) -o bin/fractalgui
 
 bin/julia.o: src/julia.c src/julia.h
 	gcc src/julia.c $(CFLAGS) -fopenmp -c -o bin/julia.o

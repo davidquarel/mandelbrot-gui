@@ -182,7 +182,7 @@ char *mandelbrot_bmp(int width, int height)
 				for (iter = iter_max; iter > 0; iter--) {
 					if (mag_sq(z) >= bound) {
 						char val = iter * color_step;
-						*current = make_color(val, val, val*2);
+						*current = make_color(val * 2, val, val);
 						break;
 					}
 					z = add(square(z), c);  /* z_{i+1} = z_i^2 + c */
