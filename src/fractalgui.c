@@ -2,7 +2,7 @@
 #define TICK_INTERVAL 20
 /* (50 fps) */
 
-int main(int argv, char **argc)
+int main(int argc, char *argv[])
 {
 	SDL_Surface *display;
 	SDL_Surface *image;
@@ -31,6 +31,10 @@ int main(int argv, char **argc)
 	white.r = 255;
 	white.g = 255;
 	white.b = 255;
+
+	if (!(argc == 1 || argc == 3)) {
+		print_usage_exit();
+	}
  
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		perror("Error initialising SDL");
@@ -80,7 +84,10 @@ int main(int argv, char **argc)
 	loop = 1;
 	while (loop) {
 		while (SDL_PollEvent(&event)) {
-			if (event.type == SDL_KEYDOWN) {
+			if (event.type == SDL_QUIT) {
+				loop = 0;
+				break;
+			} else if (event.type == SDL_KEYDOWN) {
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE:
 					case SDLK_q:
@@ -115,5 +122,11 @@ int main(int argv, char **argc)
 	SDL_Quit();
  
 	exit(0);
+}
+
+void print_usage_exit()
+{
+	printf("Usage:\nfractalgui [<width> <height>]\n");
+	exit(1);
 }
 

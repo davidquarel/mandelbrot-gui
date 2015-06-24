@@ -7,4 +7,6 @@
 #define FRACTAL_H
 #include "fractal.h"
 #endif
+
+void print_usage_exit();
  
