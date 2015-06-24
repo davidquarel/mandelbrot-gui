@@ -17,8 +17,6 @@ int main(int argc, char *argv[])
 	struct mandelparams p;
 	char *im;
 
-	p.width = 480;
-	p.height = 480;
 	p.center_x = 0;
 	p.center_y = 0;
 	p.scale_factor_x = 2 * 2 / (double)1024 + 1;
@@ -32,7 +30,15 @@ int main(int argc, char *argv[])
 	white.g = 255;
 	white.b = 255;
 
-	if (!(argc == 1 || argc == 3)) {
+	if (argc == 1) {
+		p.width = 480;
+		p.height = 480;
+	} else if (argc == 3) {
+		if (ispnum(argv[1]) && ispnum(argv[2])) {
+			p.width = atoi(argv[1]);
+			p.height = atoi(argv[2]);
+		}
+	} else {
 		print_usage_exit();
 	}
  
@@ -41,7 +47,7 @@ int main(int argc, char *argv[])
 		exit(-1);
 	}
  
-	display = SDL_SetVideoMode(480, 480, 8, SDL_HWSURFACE);
+	display = SDL_SetVideoMode(p.width, p.height, 8, SDL_HWSURFACE);
 	if(display == NULL){
 		perror("Error initialising display");
 		SDL_Quit();
@@ -128,5 +134,16 @@ void print_usage_exit()
 {
 	printf("Usage:\nfractalgui [<width> <height>]\n");
 	exit(1);
+}
+
+int ispnum(char *s)
+{
+	int len = strlen(s);
+	for (int i = 0; i < len; i++) {
+		if (!isdigit(s[i])) {
+			return 0;
+		}
+	}
+	return 1;
 }
 
