@@ -1,7 +1,7 @@
 #include "fractalgui.h"
 #define TICK_INTERVAL 20
 /* (50 fps) */
-#define ITER_MAX_INCREASE 1.03
+#define ITER_MAX_INCREASE 1.04
 
 int main(int argc, char *argv[])
 {
