@@ -1,6 +1,7 @@
 #include "fractalgui.h"
 #define TICK_INTERVAL 20
 /* (50 fps) */
+#define ITER_MAX_INCREASE 1.03
 
 int main(int argc, char *argv[])
 {
@@ -24,7 +25,7 @@ int main(int argc, char *argv[])
 	p.radius = 2;
 	p.bound = 4;
 	p.iter_max = 100;
-	p.color_step = 11;
+	p.color_step = 5;
 
 	white.r = 255;
 	white.g = 255;
@@ -110,8 +111,10 @@ int main(int argc, char *argv[])
 				p.center_y = p.center_y + ((((double)event.button.y / ((double)p.width / 2.0)) - 1) * p.radius);
 				if (event.button.button == SDL_BUTTON_LEFT) {
 					p.radius /= 2;
+					p.iter_max *= ITER_MAX_INCREASE;
 				} else if (event.button.button == SDL_BUTTON_RIGHT) {
 					p.radius *= 2;
+					p.iter_max /= ITER_MAX_INCREASE;
 				}
 				im = mandelbrot_bmp(p);
 				image = SDL_LoadBMP_RW(SDL_RWFromMem((void *)im, p.height * ((p.width * 3) + padding) + 26), 0);
