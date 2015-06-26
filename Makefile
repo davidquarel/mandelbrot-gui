@@ -15,7 +15,7 @@ bin/fractalgui: src/fractalgui.c src/fractalgui.h src/fractal.h bin/mandelbrot.o
 bin/julia.o: src/julia.c src/julia.h
 	gcc src/julia.c $(CFLAGS) -fopenmp -c -o bin/julia.o
 
-bin/mandelbrot.o: src/mandelbrot.c
+bin/mandelbrot.o: src/mandelbrot.c src/mandelbrot.h
 	gcc src/mandelbrot.c $(CFLAGS) -fopenmp -c -o bin/mandelbrot.o
 
 bin/dcomplex.o: src/dcomplex.c src/dcomplex.h
