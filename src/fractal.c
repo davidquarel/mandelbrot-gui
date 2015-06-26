@@ -1,7 +1,4 @@
-#ifndef FRACTAL_H
-#define FRACTAL_H
 #include "fractal.h"
-#endif
 
 int main(int argc, char *argv[])
 {

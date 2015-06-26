@@ -1,8 +1,5 @@
-/* BENCHMARK
- * time ./mandelbrot -d 8192 8192 -f c -i 150 -z -0.16 1.033 0.015 > test.ppm
- * this took partch 3m16s
- */
-
+#ifndef FRACTAL_H
+#define FRACTAL_H
 #include <string.h>
 #include <math.h>
 
@@ -22,16 +19,10 @@ struct mandelparams {
 	double scale_factor_y;
 };
 
-#ifndef MANDELBROT_H
-#define MANDELBROT_H
 #include "mandelbrot.h"
-#endif
-
-#ifndef JULIA_H
-#define JULIA_H
 #include "julia.h"
-#endif
 
 void print_usage();
 void print_help();
+#endif
 

@@ -1,3 +1,5 @@
+#ifndef DCOMPLEX_H
+#define DCOMPLEX_H
 typedef struct {
 	double re;
 	double im;
@@ -9,4 +11,5 @@ complex add(complex a, complex b);
 complex mult(complex a, complex b);
 complex square(complex a);
 double mag_sq(complex a);
+#endif
 

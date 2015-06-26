@@ -1,14 +1,4 @@
-/* Mandelbrot Set
- * David Quarel 07/06/15
- * Pipe output from code into a .ppm file
- * Got zoom working
- * Color is now parallelized
- */
-
-#ifndef MANDELBROT_H
-#define MANDELBROT_H
 #include "mandelbrot.h"
-#endif
 
 char bmpheader[] = "BM"			/* size - 26 bytes */
      		   "\x00\x00\x00\x00"
