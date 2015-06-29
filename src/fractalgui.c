@@ -1,7 +1,7 @@
 #include "fractalgui.h"
 #define TICK_INTERVAL 20
+#define ITER_MAX_INCREASE 1.05
 /* (50 fps) */
-#define ITER_MAX_INCREASE 1.04
 
 int main(int argc, char *argv[])
 {
@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
 	white.b = 255;
 
 	if (argc == 1) {
-		p.width = 480;
-		p.height = 480;
+		p.width = 640;
+		p.height = 640;
 	} else if (argc == 3) {
 		if (ispnum(argv[1]) && ispnum(argv[2])) {
 			p.width = atoi(argv[1]);
