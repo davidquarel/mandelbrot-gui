@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
 		case 'b':
 			image = mandelbrot_bw(p);
 			len = (p.width * p.height * sizeof(char) * 2 + p.height + 5 + log10(p.width) + log10(p.height));
+			break;
 		case 'g':
 			image = mandelbrot_gs(p);
 			len = (p.width * (p.height + 1) * sizeof(char) + 10 + log10(p.width) + log10(p.height));
